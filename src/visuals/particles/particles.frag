@@ -41,12 +41,14 @@ void main () {
 	float roughness = u_roughness;
   float ao = 0.;
 
-  float emissiveAttenuationSoft =  1.0 / (1.0 + 6.0 * v_distFromNearestEmissive);
+  float emissiveAttenuationSoft =  1.0 / (2.0 + 6.0 * v_distFromNearestEmissive);
   float emissiveAttenuationMid = 1.0 / (2.0 + 6.0 * v_distFromNearestEmissive * v_distFromNearestEmissive);
-  float emissiveAttenuationHard = 1.0 / (0.5 + 100.0 * v_distFromNearestEmissive * v_distFromNearestEmissive);
+  float emissiveAttenuationHard = 1.0 / (1.7 + 100.0 * v_distFromNearestEmissive * v_distFromNearestEmissive);
 
   vec3 albedo = SRGBToLinear(u_color);
-  vec3 emissive = SRGBToLinear(u_emissiveColor * (emissiveAttenuationSoft + emissiveAttenuationMid) + 0.5 * emissiveAttenuationHard);
+  vec3 emissive = u_emissiveColor * (emissiveAttenuationSoft + emissiveAttenuationMid);
+  emissive = mix(emissive, vec3(1.5), emissiveAttenuationHard);
+  emissive = SRGBToLinear(emissive);
   emissive *= emissive;
 
 	vec3 viewNormal = faceDirection * normalize(v_viewNormal);
@@ -57,7 +59,7 @@ void main () {
   roughness = max( roughness, MIN_ROUGHNESS );
 
 	float shadow = getShadowMask(blueNoise);
-  float bloomIntensity = saturate(emissiveAttenuationHard);
+  float bloomIntensity = saturate(emissiveAttenuationMid);
 
   gAlbedoMetallic = vec4(albedo, metalness);
 	gNormalRoughShadowBloom = vec4(viewNormal, packData(roughness, shadow, bloomIntensity));

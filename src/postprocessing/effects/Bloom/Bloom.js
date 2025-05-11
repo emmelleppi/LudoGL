@@ -20,7 +20,7 @@ import visuals from '../../../visuals/visuals';
 export default class Bloom extends Effect {
 	name = 'Bloom';
 	intensity = 8;
-	haloIntensity = 0.5;
+	haloIntensity = 0.25;
 	frameBufferScale = 0.5;
 	frameBuffer = null;
 	luminanceProgram = null;
