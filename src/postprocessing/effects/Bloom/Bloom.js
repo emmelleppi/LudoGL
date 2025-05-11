@@ -20,7 +20,7 @@ import visuals from '../../../visuals/visuals';
 export default class Bloom extends Effect {
 	name = 'Bloom';
 	intensity = 8;
-	haloIntensity = 1;
+	haloIntensity = 1.5;
 	frameBufferScale = 0.5;
 	frameBuffer = null;
 	luminanceProgram = null;
@@ -88,8 +88,9 @@ export default class Bloom extends Effect {
 
 		this.gradientTexture = new Texture(null, 1, 1, {
 			filter: FILTER.LINEAR,
+			wrap: WRAP.MIRRORED_REPEAT,
 		});
-		this.gradientTexture.loadImage('/bloom/gradient_flare.png', () => {
+		this.gradientTexture.loadImage('/bloom/gradient_flare2.jpg', () => {
 			this.luminanceProgram.uniforms.u_gradientTexture.value = this.gradientTexture;
 		});
 	}

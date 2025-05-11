@@ -77,10 +77,13 @@ void main() {
   // gradient
   const vec2 center = vec2(0.5);
   vec2 gradientUV = vec2(
-      clamp(distance(v_uv, center) * 2.0, 0.0, 1.0),
+      distance(v_uv, center) * 12.0,
       0.0
   );
-  vec3 gradient = texture(u_gradientTexture, gradientUV).rgb;
+
+  vec2 centerVec = v_uv - vec2(0.5);
+	float radial = acos(centerVec.x / length(centerVec));
+  vec3 gradient = 0.25 + 0.75 *texture(u_gradientTexture, vec2(0.75 *radial, 0.5)).rgb;
 
   fragColor.rgb = gradient * (0.2 * emissive + luma + u_halo * halo * ghost);
 	fragColor.a = luma;
