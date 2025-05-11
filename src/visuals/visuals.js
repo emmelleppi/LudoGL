@@ -39,8 +39,11 @@ class Visuals {
 	update(dt) {
 		cube.update(dt);
 		light.update(dt);
-		helmet.update(dt);
-		particles.update(dt);
+		if (this.showHelmet) {
+			helmet.update(dt);
+		} else {
+			particles.update(dt);
+		}
 		orb.update(dt);
 	}
 
