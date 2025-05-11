@@ -85,6 +85,6 @@ void main() {
 	float radial = acos(centerVec.x / length(centerVec));
   vec3 gradient = 0.25 + 0.75 *texture(u_gradientTexture, vec2(0.75 *radial, 0.5)).rgb;
 
-  fragColor.rgb = 0.2 * emissive + luma + gradient * u_halo * halo * ghost;
+  fragColor.rgb = 0.15 * emissive + luma + gradient * u_halo * halo * ghost;
 	fragColor.a = luma;
 }

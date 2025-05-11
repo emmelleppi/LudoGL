@@ -20,7 +20,7 @@ import visuals from '../../../visuals/visuals';
 export default class Bloom extends Effect {
 	name = 'Bloom';
 	intensity = 8;
-	haloIntensity = 1.5;
+	haloIntensity = 0.5;
 	frameBufferScale = 0.5;
 	frameBuffer = null;
 	luminanceProgram = null;
@@ -115,8 +115,8 @@ export default class Bloom extends Effect {
 		}
 
 		this.luminanceProgram.uniforms.u_inputTexture.value = inputBuffer;
-		this.luminanceProgram.uniforms.u_threshold.value = visuals.showHelmet ? 0.7 : 0.25;
-		this.luminanceProgram.uniforms.u_smoothing.value = visuals.showHelmet ? 0.1 : 0.02;
+		this.luminanceProgram.uniforms.u_threshold.value = visuals.showHelmet ? 0.7 : 0.9;
+		this.luminanceProgram.uniforms.u_smoothing.value = visuals.showHelmet ? 0.1 : 0.1;
 		glUtils.renderProgram(this.luminanceProgram, this.frameBuffer);
 
 		this.mipmapBlurPass.render(this.frameBuffer);
