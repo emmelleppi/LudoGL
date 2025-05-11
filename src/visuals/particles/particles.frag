@@ -59,7 +59,7 @@ void main () {
   roughness = max( roughness, MIN_ROUGHNESS );
 
 	float shadow = getShadowMask(blueNoise);
-  float bloomIntensity = saturate(emissiveAttenuationMid);
+  float bloomIntensity = 1.0;//saturate(emissiveAttenuationMid);
 
   gAlbedoMetallic = vec4(albedo, metalness);
 	gNormalRoughShadowBloom = vec4(viewNormal, packData(roughness, shadow, bloomIntensity));
