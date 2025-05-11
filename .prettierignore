@@ -1,0 +1,19 @@
+# GLSL shader files
+**/*.frag
+**/*.vert
+**/*.glsl
+**/*.vs
+**/*.fs
+**/*.vert.js
+**/*.frag.js
+**/*.glsl.js
+
+# Build files
+dist
+build
+node_modules
+
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock 

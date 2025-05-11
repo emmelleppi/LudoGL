@@ -1,0 +1,37 @@
+[Settings]
+
+[build]
+  command = "npm run build"
+  publish = "dist/"
+
+[build.environment]
+  NODE_VERSION = "18.19.0"
+
+# [[headers]]
+#   for = "/*"
+#   [headers.values]
+#     Content-Security-Policy = """
+#       base-uri 'self';
+#       connect-src 'self' cdn.jsdelivr.net fonts.gstatic.com;
+#       default-src 'none';
+#       font-src 'self' cdn.jsdelivr.net fonts.gstatic.com;
+#       form-action 'self';
+#       frame-ancestors 'none';
+#       frame-src 'self';
+#       img-src 'self' data:;
+#       manifest-src 'self';
+#       media-src 'self';
+#       object-src 'self';
+#       prefetch-src 'self';
+#       script-src 'self';
+#       style-src 'self';
+#       upgrade-insecure-requests;
+#       """
+#     Expect-CT = "max-age=604800"
+#     Permissions-Policy = "fullscreen=(self)"
+#     Referrer-Policy = "same-origin"
+#     Strict-Transport-Security = "max-age=31557600; includesubdomains; preload"
+#     Vary = "Accept-Encoding"
+#     X-Content-Type-Options = "nosniff"
+#     X-Frame-Options = "deny"
+#     X-XSS-Protection = "1; mode=block"
