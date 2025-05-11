@@ -10,6 +10,7 @@ import luminanceFragmentShader from './luminance.frag';
 import { MipmapBlurPass } from './MipmapBlurPass';
 import Texture from '@core/Texture';
 import gBufferPass from '../../../gBufferPass/gBufferPass';
+import visuals from '../../../visuals/visuals';
 
 // Bloom effect based  on
 // https://github.com/pmndrs/postprocessing/blob/fc9ed867f2b0f954e5329545e6c58b1a60f399f0/src/effects/BloomEffect.js
@@ -113,6 +114,8 @@ export default class Bloom extends Effect {
 		}
 
 		this.luminanceProgram.uniforms.u_inputTexture.value = inputBuffer;
+		this.luminanceProgram.uniforms.u_threshold.value = visuals.showHelmet ? 0.7 : 0.25;
+		this.luminanceProgram.uniforms.u_smoothing.value = visuals.showHelmet ? 0.1 : 0.02;
 		glUtils.renderProgram(this.luminanceProgram, this.frameBuffer);
 
 		this.mipmapBlurPass.render(this.frameBuffer);
@@ -121,6 +124,7 @@ export default class Bloom extends Effect {
 		this.bloomProgram.uniforms.u_bloomTexture.value = this.mipmapBlurPass.texture;
 		this.bloomProgram.uniforms.u_textureSize.value.set(this.mipmapBlurPass.texture.width, this.mipmapBlurPass.texture.height);
 		this.bloomProgram.uniforms.u_starburstOffset.value = 0.009 * sharedProps.time;
+
 		glUtils.renderProgram(this.bloomProgram, outputBuffer);
 	}
 }

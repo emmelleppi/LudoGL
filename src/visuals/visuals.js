@@ -6,6 +6,8 @@ import glUtils from '@core/glUtils';
 import orb from './orb/orb';
 
 class Visuals {
+	showHelmet = false;
+
 	preInit() {
 		cube.preInit();
 		helmet.preInit();
@@ -20,6 +22,10 @@ class Visuals {
 		light.init();
 		particles.init();
 		orb.init();
+
+		document.getElementById('showHelmetButton').addEventListener('change', () => {
+			this.showHelmet = !this.showHelmet;
+		});
 	}
 
 	resize(width, height) {
@@ -41,14 +47,20 @@ class Visuals {
 	draw(camera, buffer) {
 		cube.draw(camera, buffer, true);
 		light.draw(camera, buffer, false);
-		// helmet.draw(camera, buffer, false);
-		particles.draw(camera, buffer, false);
+		if (this.showHelmet) {
+			helmet.draw(camera, buffer, false);
+		} else {
+			particles.draw(camera, buffer, false);
+		}
 	}
 
 	drawDepth(shadowCamera, shadowBuffer) {
 		glUtils.clearColor = glUtils.clearColorWhite;
-		// helmet.drawDepth(shadowCamera, shadowBuffer, true);
-		particles.drawDepth(shadowCamera, shadowBuffer, true);
+		if (this.showHelmet) {
+			helmet.drawDepth(shadowCamera, shadowBuffer, true);
+		} else {
+			particles.drawDepth(shadowCamera, shadowBuffer, true);
+		}
 		glUtils.clearColor = glUtils.clearColorTransparent;
 	}
 

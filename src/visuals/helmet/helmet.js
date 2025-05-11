@@ -11,7 +11,7 @@ import lightShadow from '@visuals/light/lightShadow';
 
 class Helmet {
 	helmetMesh = null;
-	helmetProgram = null;
+	program = null;
 	geometry = null;
 
 	isReady = false;
@@ -68,7 +68,7 @@ class Helmet {
 	}
 
 	createMesh() {
-		this.helmetProgram = new Program({
+		this.program = new Program({
 			uniforms: Object.assign(this.uniforms, lightShadow.sharedUniforms, sharedProps.blueNoiseSharedUniforms),
 			vert: helmetVert,
 			frag: helmetFrag,
@@ -76,7 +76,15 @@ class Helmet {
 				MIN_ROUGHNESS: sharedProps.minRoughness,
 			},
 		});
-		this.helmetMesh = new Mesh(this.geometry, this.helmetProgram);
+		this.programDepth = new Program({
+			uniforms: Object.assign(this.uniforms, lightShadow.sharedUniforms, sharedProps.blueNoiseSharedUniforms),
+			vert: helmetVert,
+			frag: `void main() {}`,
+			defines: {
+				IS_DEPTH: true,
+			},
+		});
+		this.helmetMesh = new Mesh(this.geometry, this.program);
 	}
 
 	resize(width, height) {}
@@ -85,21 +93,18 @@ class Helmet {
 		if (this.isReady && this.geometry && !this.helmetMesh) {
 			this.createMesh();
 		}
-
-		if (!this.helmetMesh) return;
-
-		// this.helmetMesh.position.x = 2 *Math.sin(sharedProps.time * 6 )
 	}
 
 	draw(camera, gBuffer, clear = false) {
 		if (!this.helmetMesh) return;
 
-		this.helmetMesh.program = this.helmetProgram;
+		this.helmetMesh.program = this.program;
 		glUtils.render(this.helmetMesh, camera, gBuffer, clear);
 	}
 
 	drawDepth(camera, depthBuffer, clear = false) {
 		if (!this.helmetMesh) return;
+		this.helmetMesh.program = this.programDepth;
 		glUtils.render(this.helmetMesh, camera, depthBuffer, clear);
 	}
 }

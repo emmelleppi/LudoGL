@@ -13,11 +13,6 @@ uniform sampler2D u_metalRoughnessTexture;
 uniform sampler2D u_aoTexture;
 uniform sampler2D u_emissiveTexture;
 
-uniform sampler2D u_shadowMap;
-uniform float u_shadowBias;
-uniform float u_shadowNormalBias;
-uniform vec2 u_shadowMapSize;
-
 uniform sampler2D u_blueNoiseTexture;
 uniform vec2 u_blueNoiseSize;
 uniform vec2 u_blueNoiseOffset;
