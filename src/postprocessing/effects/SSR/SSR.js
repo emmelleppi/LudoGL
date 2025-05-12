@@ -10,7 +10,7 @@ import ssrFrag from './ssr.frag';
 import ssrCompositeFrag from './ssrComposite.frag';
 import blur from './ssrBlur.frag';
 import envMapGenerator from '../../../envMapGenerator/envMapGenerator';
-import { FILTER } from '../../../core/constants';
+import { FILTER, TYPE } from '../../../core/constants';
 
 // SSR - Screen Space Reflections
 // based on
@@ -27,7 +27,10 @@ export default class SSR extends Effect {
 
 		this.frameBufferScale = sharedProps.isMobile ? 0.5 : 0.75;
 		this.frameBufferResolution = new Vector2();
-		this.ssrBuffer = new Framebuffer({ filter: FILTER.LINEAR });
+		this.historyA = new Framebuffer({ filter: FILTER.LINEAR });
+		this.historyB = new Framebuffer({ filter: FILTER.LINEAR });
+		this.historyRead = this.historyA;
+		this.historyWrite = this.historyB;
 		this.blurBuffer = new Framebuffer({ filter: FILTER.LINEAR });
 		this.blurCacheBuffer = new Framebuffer({ filter: FILTER.LINEAR });
 
@@ -56,6 +59,10 @@ export default class SSR extends Effect {
 				u_blurFactor: { value: 0.05 },
 
 				u_envMap: envMapGenerator.sharedUniforms.u_specularEnvMap,
+
+				u_motionTexture: gBufferPass.sharedUniforms.u_velocityTexture,
+				u_historyTexture: { value: null },
+				u_alpha: { value: 0.1 },
 			},
 			frag: ssrFrag,
 			defines: {
@@ -97,7 +104,8 @@ export default class SSR extends Effect {
 
 		this.frameBufferResolution.set(renderWidth, renderHeight);
 
-		this.ssrBuffer.resize(renderWidth, renderHeight);
+		this.historyA.resize(renderWidth, renderHeight);
+		this.historyB.resize(renderWidth, renderHeight);
 		this.blurCacheBuffer.resize(renderWidth, renderHeight);
 		this.blurBuffer.resize(renderWidth, renderHeight);
 	}
@@ -108,12 +116,13 @@ export default class SSR extends Effect {
 		const camera = sharedProps.camera;
 
 		this.program.uniforms.u_inputTexture.value = inputTexture;
+		this.program.uniforms.u_historyTexture.value = this.historyRead.texture;
 		this.program.uniforms.u_invProjectionMatrix.value.copy(camera.projectionMatrixInverse);
 		this.program.uniforms.u_projectionMatrix.value.copy(camera.projectionMatrix);
-		glUtils.renderProgram(this.program, this.ssrBuffer);
+		glUtils.renderProgram(this.program, this.historyWrite);
 
 		let delta = 0.03;
-		this.blurProgram.uniforms.u_textureSampler.value = this.ssrBuffer.textures[0];
+		this.blurProgram.uniforms.u_textureSampler.value = this.historyWrite.textures[0];
 		this.blurProgram.uniforms.u_texelOffsetScale.value.set(delta / this.frameBufferResolution.x, 0);
 		this.blurProgram.uniforms.u_isFinalPass.value = 0;
 		glUtils.renderProgram(this.blurProgram, this.blurCacheBuffer);
@@ -126,5 +135,7 @@ export default class SSR extends Effect {
 		this.compositeProgram.uniforms.u_inputTexture.value = inputTexture;
 		this.compositeProgram.uniforms.u_ssrTexture.value = this.blurBuffer.textures[0];
 		glUtils.renderProgram(this.compositeProgram, outputFramebuffer);
+
+		[this.historyRead, this.historyWrite] = [this.historyWrite, this.historyRead];
 	}
 }

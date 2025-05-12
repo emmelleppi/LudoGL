@@ -18,6 +18,10 @@ uniform sampler2D u_blueNoiseTexture;
 uniform vec2 u_blueNoiseOffset;
 uniform vec2 u_blueNoiseSize;
 
+uniform sampler2D u_motionTexture;
+uniform sampler2D u_historyTexture;
+uniform float u_alpha;
+
 out vec4 fragColor;
 
 #include<gbufferUtils>
@@ -245,5 +249,10 @@ void main() {
 
         blurAmount = (sideLength * (sqrt(squaredSide + squaredHeight) - sideLength)) / (4.0f * height);
     }
-    fragColor = vec4(SSR, blurAmount / 255.0);
+
+    vec2 motion = texture(u_motionTexture, v_uv).xy;
+    vec2 uvPrev = v_uv + motion;
+    vec3 colHist = texture(u_historyTexture, uvPrev).rgb;
+    vec3 colOut = mix(SSR, colHist, u_alpha);
+    fragColor = vec4(colOut, blurAmount / 255.0);
 }
